@@ -1,0 +1,215 @@
+/**
+ * ============================================================================
+ * DARK - 全局样式
+ * ============================================================================
+ *
+ * Limbo 风格暗色主题：极暗背景、低对比度文字、微弱的交互反馈。
+ * 所有颜色使用 rgba 带透明度，方便叠加和动画。
+ *
+ * 结构：
+ *   1. 全局重置 & 基础样式
+ *   2. 游戏页面（Canvas + HUD 覆盖层）
+ *   3. 大厅页面（角色选择）
+ */
+
+/* ── 1. 全局重置 ── */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #050505;
+  color: #888;
+  font-family: 'Courier New', monospace;
+}
+
+/* ──────────────────────────────────────────────
+   2. 游戏页面
+   ────────────────────────────────────────────── */
+
+/* 游戏画布：全屏，纯黑背景 */
+canvas {
+  display: block;
+  width: 100vw;
+  height: 100vh;
+  background: #000;
+}
+
+/* HUD 覆盖层：固定在顶部，不阻挡鼠标事件 */
+.hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 16px 24px;
+  pointer-events: none; /* 不阻挡 canvas 的鼠标事件 */
+  z-index: 10;
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* 状态文字（如"等待帮助者加入"） */
+.status-text {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* 语音状态标签 */
+.voice-status {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.25);
+  padding: 4px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  pointer-events: auto; /* 标签本身可点击 */
+  cursor: pointer;
+}
+
+/* 语音已连接状态：绿色 */
+.voice-status.connected {
+  color: rgba(100, 200, 100, 0.6);
+  border-color: rgba(100, 200, 100, 0.2);
+}
+
+/* 麦克风错误状态：红色 */
+.voice-status.mic-error {
+  color: rgba(200, 100, 100, 0.6);
+  border-color: rgba(200, 100, 100, 0.2);
+}
+
+/* 底部操作提示 */
+.controls-hint {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.15);
+  letter-spacing: 2px;
+  pointer-events: none;
+}
+
+/* ──────────────────────────────────────────────
+   3. 大厅页面（角色选择）
+   ────────────────────────────────────────────── */
+
+/* 大厅容器：垂直水平居中 */
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px;
+}
+
+/* 游戏标题 "DARK" */
+.game-title {
+  font-size: 48px;
+  font-weight: 100;
+  letter-spacing: 20px;
+  color: rgba(255, 255, 255, 0.15);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+/* 副标题 */
+.game-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.08);
+  letter-spacing: 6px;
+  margin-bottom: 80px;
+}
+
+/* 角色卡片容器 */
+.role-select {
+  display: flex;
+  gap: 40px;
+}
+
+/* 角色卡片 */
+.role-card {
+  width: 220px;
+  padding: 40px 30px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+  transition: all 0.4s ease;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+/* 卡片悬停效果：微弱提亮 + 上移 */
+.role-card:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+/* 角色图标（圆圈符号） */
+.role-icon {
+  font-size: 36px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+/* 角色名称 */
+.role-name {
+  font-size: 18px;
+  font-weight: 300;
+  letter-spacing: 4px;
+  color: rgba(255, 255, 255, 0.3);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+/* 角色描述文字 */
+.role-desc {
+  font-size: 11px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.12);
+  letter-spacing: 1px;
+}
+
+/* 卡片之间的分隔线 */
+.divider {
+  width: 1px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* 底部说明文字 */
+.lobby-footer {
+  margin-top: 60px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.08);
+  letter-spacing: 2px;
+  text-align: center;
+  line-height: 2;
+}
+
+/* 提示文字闪烁动画 */
+.click-hint {
+  animation: pulse 3s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.4; }
+}

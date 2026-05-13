@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DARK</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!--
+    大厅页面 - 角色选择
+
+    用户在这里选择扮演"盲人"或"帮助者"，点击后跳转到对应的游戏页面。
+    需要开两个浏览器窗口（或两个标签页）分别选择不同角色才能开始游戏。
+
+    路由：
+      /       → 大厅（本页面）
+      /blind  → 盲人端游戏页面
+      /helper → 帮助者端游戏页面
+  -->
+  <div class="lobby">
+    <h1 class="game-title">DARK</h1>
+    <p class="game-subtitle">a cooperative experience</p>
+
+    <div class="role-select">
+      <!-- 盲人角色入口 -->
+      <a href="/blind" class="role-card">
+        <span class="role-icon">◯</span>
+        <div class="role-name">盲人</div>
+        <div class="role-desc">
+          你在黑暗中行走<br>
+          只能听到对方的声音<br>
+          用 WASD 键移动
+        </div>
+      </a>
+
+      <div class="divider"></div>
+
+      <!-- 帮助者角色入口 -->
+      <a href="/helper" class="role-card">
+        <span class="role-icon">◎</span>
+        <div class="role-name">帮助者</div>
+        <div class="role-desc">
+          你能看见地图和盲人<br>
+          用语音指引对方前行<br>
+          但你无法触碰世界
+        </div>
+      </a>
+    </div>
+
+    <div class="lobby-footer">
+      <p class="click-hint">两个浏览器窗口分别选择不同角色开始游戏</p>
+      <p>需要麦克风权限进行语音通话</p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DARK - 盲人</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!--
+    盲人端游戏页面
+
+    视觉：全黑屏幕 + 微弱光晕 + 环境颗粒
+    操控：WASD 键盘移动
+    语音：点击页面后请求麦克风权限，建立 WebRTC 语音通话
+
+    脚本加载顺序（有依赖关系）：
+      1. Socket.IO 客户端库（由服务端自动提供）
+      2. 共享模块：Constants → AssetLoader → SoundManager
+      3. 网络模块：NetworkManager → VoiceChat
+      4. 盲人端模块：BlindInput → BlindRenderer → BlindGame（入口）
+  -->
+
+  <!-- 游戏画布 -->
+  <canvas id="gameCanvas"></canvas>
+
+  <!-- HUD 覆盖层 -->
+  <div class="hud">
+    <div class="hud-left">
+      <div id="status" class="status-text">正在连接...</div>
+    </div>
+    <div class="hud-right">
+      <div id="voiceStatus" class="voice-status">语音未就绪</div>
+    </div>
+  </div>
+
+  <!-- 底部操作提示 -->
+  <div class="controls-hint click-hint">WASD 移动 · 点击页面启用麦克风</div>
+
+  <!-- 依赖库 -->
+  <script src="/socket.io/socket.io.js"></script>
+
+  <!-- 共享模块 -->
+  <script src="js/shared/Constants.js"></script>
+  <script src="js/shared/AssetLoader.js"></script>
+  <script src="js/shared/SoundManager.js"></script>
+
+  <!-- 网络模块 -->
+  <script src="js/network/NetworkManager.js"></script>
+  <script src="js/network/VoiceChat.js"></script>
+
+  <!-- 盲人端模块 -->
+  <script src="js/blind/BlindInput.js"></script>
+  <script src="js/blind/BlindRenderer.js"></script>
+  <script src="js/blind/BlindGame.js"></script>
+</body>
+</html>
