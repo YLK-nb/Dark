@@ -113,31 +113,73 @@ class BlindRenderer {
     ctx.fillStyle = CONSTANTS.COLORS.blindBg;
     ctx.fillRect(0, 0, w, h);
 
-    // ── 2. 绘制外层光晕 ──
-    const cx = w / 2;
-    const cy = h / 2;
-    const glowR = cfg.radius * pulseFactor * breathFactor;
-    const coreR = cfg.coreRadius * pulseFactor;
+    // ── 2. 绘制边缘泛光 ──
+    // 从四条边向内渐变，中心保持纯黑
+    const edgeDepth = cfg.radius * pulseFactor * breathFactor; // 光晕向内渗透深度
+    const alpha = cfg.intensity * pulseFactor;
 
-    // 径向渐变：中心亮 → 边缘透明
-    const outerGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, glowR);
-    outerGrad.addColorStop(0, `rgba(255,255,255,${cfg.intensity * pulseFactor})`);
-    outerGrad.addColorStop(0.3, `rgba(255,255,255,${cfg.intensity * 0.4 * pulseFactor})`);
-    outerGrad.addColorStop(0.7, `rgba(255,255,255,${cfg.intensity * 0.1 * pulseFactor})`);
-    outerGrad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = outerGrad;
-    ctx.fillRect(0, 0, w, h);
+    // 上边缘：从上往下渐变
+    const topGrad = ctx.createLinearGradient(0, 0, 0, edgeDepth);
+    topGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+    topGrad.addColorStop(0.4, `rgba(255,255,255,${alpha * 0.3})`);
+    topGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = topGrad;
+    ctx.fillRect(0, 0, w, edgeDepth);
 
-    // ── 3. 绘制核心光圈 ──
-    const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, coreR);
-    coreGrad.addColorStop(0, `rgba(255,255,255,${cfg.coreIntensity * pulseFactor})`);
-    coreGrad.addColorStop(0.5, `rgba(255,255,255,${cfg.coreIntensity * 0.3 * pulseFactor})`);
-    coreGrad.addColorStop(1, 'rgba(255,255,255,0)');
-    ctx.fillStyle = coreGrad;
-    ctx.fillRect(cx - coreR, cy - coreR, coreR * 2, coreR * 2);
+    // 下边缘：从下往上渐变
+    const botGrad = ctx.createLinearGradient(0, h, 0, h - edgeDepth);
+    botGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+    botGrad.addColorStop(0.4, `rgba(255,255,255,${alpha * 0.3})`);
+    botGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = botGrad;
+    ctx.fillRect(0, h - edgeDepth, w, edgeDepth);
+
+    // 左边缘：从左往右渐变
+    const leftGrad = ctx.createLinearGradient(0, 0, edgeDepth, 0);
+    leftGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+    leftGrad.addColorStop(0.4, `rgba(255,255,255,${alpha * 0.3})`);
+    leftGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = leftGrad;
+    ctx.fillRect(0, 0, edgeDepth, h);
+
+    // 右边缘：从右往左渐变
+    const rightGrad = ctx.createLinearGradient(w, 0, w - edgeDepth, 0);
+    rightGrad.addColorStop(0, `rgba(255,255,255,${alpha})`);
+    rightGrad.addColorStop(0.4, `rgba(255,255,255,${alpha * 0.3})`);
+    rightGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = rightGrad;
+    ctx.fillRect(w - edgeDepth, 0, edgeDepth, h);
+
+    // 四角额外加亮（线性渐变叠加后角部会偏暗，补一下）
+    const cornerSize = edgeDepth * 0.8;
+    const cornerAlpha = alpha * 0.5;
+    const cornerGrad = ctx.createRadialGradient(0, 0, 0, 0, 0, cornerSize);
+    cornerGrad.addColorStop(0, `rgba(255,255,255,${cornerAlpha})`);
+    cornerGrad.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = cornerGrad;
+    ctx.fillRect(0, 0, cornerSize, cornerSize);
+
+    const cornerGrad2 = ctx.createRadialGradient(w, 0, 0, w, 0, cornerSize);
+    cornerGrad2.addColorStop(0, `rgba(255,255,255,${cornerAlpha})`);
+    cornerGrad2.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = cornerGrad2;
+    ctx.fillRect(w - cornerSize, 0, cornerSize, cornerSize);
+
+    const cornerGrad3 = ctx.createRadialGradient(0, h, 0, 0, h, cornerSize);
+    cornerGrad3.addColorStop(0, `rgba(255,255,255,${cornerAlpha})`);
+    cornerGrad3.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = cornerGrad3;
+    ctx.fillRect(0, h - cornerSize, cornerSize, cornerSize);
+
+    const cornerGrad4 = ctx.createRadialGradient(w, h, 0, w, h, cornerSize);
+    cornerGrad4.addColorStop(0, `rgba(255,255,255,${cornerAlpha})`);
+    cornerGrad4.addColorStop(1, 'rgba(255,255,255,0)');
+    ctx.fillStyle = cornerGrad4;
+    ctx.fillRect(w - cornerSize, h - cornerSize, cornerSize, cornerSize);
 
     // ── 4. 绘制环境颗粒 ──
     // 'lighter' 混合模式：粒子叠加后更亮，模拟微光效果
+    // 粒子在边缘泛光范围内可见，离边缘越近越亮
     ctx.globalCompositeOperation = 'lighter';
     for (const p of this.particles) {
       // 更新位置（漂移）
@@ -154,13 +196,19 @@ class BlindRenderer {
       // 透明度随相位波动
       const opacity = p.opacity * (0.5 + 0.5 * Math.sin(p.phase));
 
-      // 只在光晕范围内绘制（节省性能 + 产生自然的边缘效果）
+      // 计算粒子到最近边缘的距离（归一化 0-1）
       const px = p.x * w;
       const py = p.y * h;
-      const dist = Math.sqrt((px - cx) ** 2 + (py - cy) ** 2);
-      if (dist < glowR * 1.2) {
-        // 离中心越远越淡
-        const fadeByDist = 1 - dist / (glowR * 1.2);
+      const distToLeft = p.x;
+      const distToRight = 1 - p.x;
+      const distToTop = p.y;
+      const distToBottom = 1 - p.y;
+      const edgeDist = Math.min(distToLeft, distToRight, distToTop, distToBottom);
+
+      // 只在边缘泛光范围内绘制（离边缘 < edgeDepth 的区域）
+      const edgeThreshold = edgeDepth / Math.max(w, h);
+      if (edgeDist < edgeThreshold * 1.2) {
+        const fadeByDist = 1 - edgeDist / (edgeThreshold * 1.2);
         const [r, g, b] = particleCfg.color;
         ctx.fillStyle = `rgba(${r},${g},${b},${opacity * fadeByDist})`;
         ctx.beginPath();
